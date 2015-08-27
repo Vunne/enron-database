@@ -78,11 +78,42 @@ Draw(pred, finance_features, poi, name="clusters_before_scaling.pdf", f1_name=fe
 ### for the data and store them to a list called pred
 
 try:
-    Draw(pred, finance_features, poi, mark_poi=False, name="clusters.pdf", f1_name=feature_1, f2_name=feature_2)
+    Draw(pred, finance_features, poi, mark_poi=True, name="clusters.pdf", f1_name=feature_1, f2_name=feature_2)
 except NameError:
     print "no predictions object named pred found, no clusters to plot"
 
 
+print "Unit 8-22: From querying the data dictionary, what's the maximum and minimum " + "values taken by \"exercised_stock_options\"? (ignore \"NaN\")"
+import sys 
+print data_dict[ max( data_dict, key=lambda x: None if
+		data_dict[x]['exercised_stock_options']=='NaN' else
+		float(data_dict[x]['exercised_stock_options']) ) ]['exercised_stock_options'] 
+print data_dict[ min( data_dict, key=lambda x: sys.float_info.max if
+		data_dict[x]['exercised_stock_options']=='NaN' else
+		float(data_dict[x]['exercised_stock_options']) ) ]['exercised_stock_options']
 
+from sklearn.preprocessing import MinMaxScaler
 
+salary = []
+ex_stock = []
+print "data_dict.values()[0]['salary']", data_dict.values()[0]["salary"]
+for name in data_dict:
+	if data_dict[name]["salary"] != 'NaN':
+		salary.append( data_dict[name]["salary"] )
+	if data_dict[name]["exercised_stock_options"] != 'NaN':
+		ex_stock.append( data_dict[name]["exercised_stock_options"] )
+print 'salary', salary
+print '-----------'
 
+salary.append(200000.0)
+salary = numpy.array([[e] for e in salary])
+print 'numpy salary', salary
+scaler_salary = MinMaxScaler()
+rescaled_salary = scaler_salary.fit_transform(salary)
+print rescaled_salary[-1]
+
+ex_stock.append(1000000.0)
+ex_stock = numpy.array([[e] for e in ex_stock])
+scaler_stok = MinMaxScaler()
+rescaled_stock = scaler_stok.fit_transform(ex_stock)
+print rescaled_stock[-1]

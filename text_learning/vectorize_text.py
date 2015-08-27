@@ -40,25 +40,32 @@ for name, from_person in [("sara", from_sara), ("chris", from_chris)]:
     for path in from_person:
         ### only look at first 200 emails when developing
         ### once everything is working, remove this line to run over full dataset
-        temp_counter += 1
-        if temp_counter < 200:
-            path = os.path.join('..', path[:-1])
+        #temp_counter += 1
+        if True:
+            #path = os.path.join('../../enron_mail_20110402/maildir/bailey-s/deleted_items/101')
+            # [:-1] in path should remove the "." at the end but it does not,
+            # so I add it again in the next line
+            path = os.path.join('../..', path[:-1])
             print path
-            email = open(path, "r")
+            email = open(path[:-1], "r")
 
             ### use parseOutText to extract the text from the opened email
-
+            parsed = parseOutText(email)
             ### use str.replace() to remove any instances of the words
             ### ["sara", "shackleton", "chris", "germani"]
-
+            replace_words = ["sara", "shackleton", "chris", "germani", "sshacklensf", "cgermannsf"]
+            for w in replace_words:
+                parsed = parsed.replace(w, "")
             ### append the text to word_data
-
+            word_data.append(parsed)
+            ### a dictionary to help with the encoded from_data
+            name_encoded = dict(zip(["sara", "chris"],[0, 1]))
             ### append a 0 to from_data if email is from Sara, and 1 if email is from Chris
-
+            from_data.append( name_encoded[name] )
 
             email.close()
 
-print "emails processed"
+print "-- emails processed --"
 from_sara.close()
 from_chris.close()
 
@@ -66,9 +73,10 @@ pickle.dump( word_data, open("your_word_data.pkl", "w") )
 pickle.dump( from_data, open("your_email_authors.pkl", "w") )
 
 
-
-
-
 ### in Part 4, do TfIdf vectorization here
 
+from sklearn.feature_extraction.text import TfidfVectorizer
 
+vect = TfidfVectorizer(stop_words='english')
+vect.fit_transform(word_data)
+print "#feature names: ", len(vect.get_feature_names())
